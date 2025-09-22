@@ -17,7 +17,6 @@ const FIRMNESS_ORDER: Berry['firmness'][] = [
 
 export default function BerriesPage() {
     const {data: berries, isLoading, isError, error} = useAllBerries();
-    console.log(berries);
     const [selectedFirmness, setSelectedFirmness] = useState<FirmnessValue>('very-soft');
     const [searchTerm, setSearchTerm] = useState('');
 

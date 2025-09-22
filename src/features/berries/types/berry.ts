@@ -1,7 +1,7 @@
 export type Flavor = {
     name: string,
-     potency: number;
-    }
+    potency: number;
+}
 
 export type Berry = {
     id: number;
@@ -28,7 +28,7 @@ export type BerryDetailDTO = {
     flavors: {
         potency: number;
         flavor: {
-            name: Flavor["name"];
+            name: string;
             url: string;
     }[];
 }
