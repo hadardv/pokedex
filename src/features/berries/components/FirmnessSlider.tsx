@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useRef, useState } from "react";
+import React, { useMemo, useRef, useState } from "react";
 import type { Berry } from "../types/berry";
 import styles from "./FirmnessSlider.module.css";
 import {
@@ -6,10 +6,9 @@ import {
   indexToGlowCenter,
   indexToThumbTranslate,
   lerpHueDeg,
-  pickIndexFromPointer,
-  pointerYOnTrack,
 } from "../../../utils/sliderGeometry";
 import { darkRedHue, greenHue, redHue, ROW_GAP, ROW_H, THUMB, yellowHue} from "../../../utils/constants";
+import { useGesture } from "@use-gesture/react";
 
 
 type SliderVars = React.CSSProperties & {
@@ -79,52 +78,42 @@ export default function FirmnessSlider({
     return lerpHueDeg(h0, h1, t);
   },[isDragging, dragY, glowY, step, options, lockedHue]);
 
-  useEffect(() => {
-    if (!isDragging) return;
+  // handle drag gesture on the track
+    useGesture(
+    {
+      onDrag: ({ active, xy: [, y] }) => {
+        const wrap = trackWrapRef.current;
+        if (!wrap) return;
 
-    const onMove = (e: PointerEvent) => {
-      const rawY = pointerYOnTrack(e, trackWrapRef.current); // the y on the track
-      if( rawY == null ) return;
+        setIsDragging(active);
 
-      const y = clamp(rawY, 0, full); // keep it on track
-      setDragY(y); // updating the continuous drag Y location
+        const rect = wrap.getBoundingClientRect();
+        const relY = y - rect.top;           
+        const clamped = clamp(relY, 0, full); 
+        setDragY(clamped);
 
-      // when crossing the threshold for a new row, call onChange
-      const idx = Math.round(y / step);
-      const clampedIdx = clamp(idx, 0, options.length - 1);
-      if (clampedIdx !== activeIndex) onChange(options[clampedIdx].value);
-    };
-    const stop = () => {
-      setIsDragging(false);
-      setDragY(null);
+        
+        const idx = Math.round(clamped / step);
+        const nextIdx = clamp(idx, 0, options.length - 1);
+        if (nextIdx !== activeIndex) onChange(options[nextIdx].value);
+
+       
+        if (!active) setDragY(null);
+      },
+    },
+    {
+      target: trackWrapRef,
+      drag: {
+        axis: "y",
+        filterTaps: true,
+        pointer: { touch: true }, 
+      },
     }
+  );
 
-    window.addEventListener("pointermove", onMove);
-    window.addEventListener("pointerup", stop, { once: true });
-    window.addEventListener("pointercancel", stop, { once: true });
-
-    return () => {
-      window.removeEventListener("pointermove", onMove);
-      window.removeEventListener("pointerup", stop);
-      window.removeEventListener("pointercancel", stop);
-    };
-  }, [isDragging, options, activeIndex, onChange, step, full]);
-
-  const handlePointerDown = (e: React.PointerEvent) => {
-    (e.target as HTMLElement).setPointerCapture?.(e.pointerId);
-    setIsDragging(true);
-
-    const rawY = pointerYOnTrack(e.nativeEvent, trackWrapRef.current);
-    if( rawY == null ) return;
-    const y = clamp(rawY, 0, full);
-    setDragY(y);
-
-    const idx = pickIndexFromPointer(e.nativeEvent, trackWrapRef.current, options.length);
-    if( idx == null ) return;
-    const clampedIdx = clamp(idx, 0, options.length - 1);
-
-    if (clampedIdx != null && clampedIdx !== activeIndex) onChange(options[clampedIdx].value);
-  };
+  
+  type ThumbVars = React.CSSProperties & { '--thumb-translate': string };
+  const thumbStyle: ThumbVars = { '--thumb-translate': `${knobTranslate}px` };
 
   // when clicking a row, if not active, call onChange
   const handleRowClick = (idx: number) => {
@@ -147,12 +136,12 @@ const cssVars: SliderVars = {
         <div className={styles.sub}>{subtitle}</div>
       </div>
 
-      <div ref={trackWrapRef} className={styles.trackWrap} onPointerDown={handlePointerDown}>
+      <div ref={trackWrapRef} className={styles.trackWrap}>
         <div className={styles.track}>
           <div className={styles.glow} aria-hidden />
           <div
             className={`${styles.thumb} ${isDragging ? styles.thumbDragging : ""}`}
-            style={{ ["--thumb-translate" as string ]: `${knobTranslate}px` }}
+            style={thumbStyle}
             aria-hidden
           />
         </div>
