@@ -1,69 +1,85 @@
-# React + TypeScript + Vite
+# Poké Berries — React + TypeScript + TanStack Query
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+React project that lists and filters **PokéAPI berries** with a custom **vertical Firmness Slider** (drag with live motion + snap) and **debounced search**. Built to demonstrate solid frontend practices: typed API boundaries (DTO → domain mapping), TanStack Query for fetching, and modular CSS.
 
-Currently, two official plugins are available:
+---
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## Features
 
-## Expanding the ESLint configuration
+- **Data fetching with TanStack Query v5** (no `useEffect`/`useState` for fetching).
+- **Firmness Slider** (vertical): smooth live drag, snapping between levels, glow color per firmness.
+- **Search with debounce**.
+- **Feature-first structure** with **CSS Modules**.
+- **DTO → Domain mapping** (decouples UI from raw API).
+- **Bounded concurrency** for detail fetches.
+- **Slider drag**: powered by `@use-gesture/react` for simpler code.
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+---
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+## Stack
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+- Vite + React + TypeScript  
+- @tanstack/react-query (+ Devtools)  
+- CSS Modules  
+- @use-gesture/react for drag handling  
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+---
+
+## Project structure
+
+```
+src/
+  app/                 
+  lib/                 # http, hooks, helpers
+  utils/               # slider geometry
+  features/
+    berries/
+      api/             # HTTP-only calls
+      queries/         # TanStack query hooks
+      types/           # DTO + domain types
+      components/      # BerryCard, SearchInput, FirmnessSlider, EmptyState
+      pages/           # BerriesPage screen
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+---
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+## 🔌 API & Types
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+- `GET /berry?limit=...` → **BerryListDTO** (list of links)
+- `GET /berry/:id|:name` → **BerryDetailDTO** (firmness, flavors, ...)
+
+**Berry** domain type:
+```ts
+type Berry = {
+  id: number;
+  name: string;
+  firmness: "very-soft" | "soft" | "hard" | "very-hard" | "super-hard";
+  flavors: { name: string; potency: number }[];
+};
 ```
+Only flavors with `potency > 0` are kept.
+
+---
+
+## Firmness Slider (how it works)
+
+- **Live drag**: while dragging, the knob & glow follow the pointer continuously.
+- **Snap**: selection updates only when the pointer crosses the midpoint of the nearest row.
+- **Color**: hue (HSL) changes by firmness (`118°` green → `28°` orange → `6°/355°` red).
+
+---
+
+## Search (Debounce)
+
+A tiny `useDebouncedValue` hook delays filtering (e.g. 300ms) for smoother typing and fewer renders.
+
+---
+
+## Install & Run
+
+```bash
+npm i
+npm run dev
+# open http://localhost:5173
+```
+
