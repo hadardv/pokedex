@@ -6,6 +6,8 @@ import BerryCard from "../components/BerryCard";
 import SearchInput from "../components/SearchInput";
 import { labelize } from "../../../utils/labelize";
 import FirmnessSlider, { type FirmnessOption, type FirmnessValue } from "../components/FirmnessSlider";
+import EmptyState from "../components/EmptyState";
+import { useDebounceValue } from "../../../hooks/useDebounceValue";
 
 const FIRMNESS_ORDER: Berry['firmness'][] = [
     'super-hard',
@@ -19,6 +21,8 @@ export default function BerriesPage() {
     const {data: berries, isLoading, isError, error} = useAllBerries();
     const [selectedFirmness, setSelectedFirmness] = useState<FirmnessValue>('very-soft');
     const [searchTerm, setSearchTerm] = useState('');
+    
+    const debouncedSearchTerm = useDebounceValue(searchTerm, 300);
 
      const countsByFirmness = useMemo(() => {
         const map = new Map<Berry['firmness'], number>();
@@ -41,9 +45,10 @@ export default function BerriesPage() {
     const filtered = useMemo(() => {
         if(!berries) return [];
         const byFirmness = berries.filter(b => b.firmness === selectedFirmness);
-        const byName = searchTerm.trim() === '' ? byFirmness : byFirmness.filter(b => b.name.includes(searchTerm.trim().toLowerCase()));
-        return byName;
-    },[berries, selectedFirmness, searchTerm]);
+        const term = debouncedSearchTerm.trim().toLowerCase();
+        if(term === '') return byFirmness;
+        return byFirmness.filter(b => b.name.toLowerCase().includes(term));
+    },[berries, selectedFirmness, debouncedSearchTerm]);
 
    
     if (isLoading) return <div className={styles.center}>Loading berries…</div>;
@@ -68,9 +73,9 @@ export default function BerriesPage() {
                             ariaLabel="Search berries by name"
                         />
                         <div className={styles.scrollList}>
-                            {filtered.map((b) => (
+                            {filtered.length === 0 ? (<EmptyState query={searchTerm}/>) : (filtered.map((b) => (
                                 <BerryCard key={b.id} berry={b} />
-                            ))}
+                            )))}
                         </div>
                 </main>
             </div>

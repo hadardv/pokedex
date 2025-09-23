@@ -1,16 +1,17 @@
+import { ROW_GAP, ROW_H, THUMB } from "./constants";
 
-export const ROW_H = 70;      
-export const ROW_GAP = 16;    
-export const THUMB = 40;
 
+// Where should the knob sit so its center aligns with the selected row
 export function indexToThumbTranslate(index: number) {
   return index * (ROW_H + ROW_GAP) + (ROW_H - THUMB) / 2;
 }
 
+// Where should the glow center align with the selected row
 export function indexToGlowCenter(index: number) {
   return index * (ROW_H + ROW_GAP) + ROW_H / 2;
 }
 
+// Convert a pointer’s Y on the track to the nearest row index.
 export function pickIndexFromPointer(
   e: PointerEvent,
   wrap: HTMLDivElement | null,

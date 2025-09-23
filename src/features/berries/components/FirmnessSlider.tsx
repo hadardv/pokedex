@@ -2,12 +2,13 @@ import React, { useEffect, useMemo, useRef, useState } from "react";
 import type { Berry } from "../types/berry";
 import styles from "./FirmnessSlider.module.css";
 import {
-  ROW_H,
-  ROW_GAP,
   indexToGlowCenter,
   indexToThumbTranslate,
   pickIndexFromPointer,
 } from "../../../utils/math";
+import { darkRedHue, greenHue, redHue, ROW_GAP, ROW_H, yellowHue} from "../../../utils/constants";
+
+
 type SliderVars = React.CSSProperties & {
   '--rows': string;
   '--row-h': string;
@@ -16,6 +17,7 @@ type SliderVars = React.CSSProperties & {
   '--hue': string;
 };
 export type FirmnessValue = Berry["firmness"];
+
 export type FirmnessOption = { value: FirmnessValue; label: string; count: number };
 
 type Props = {
@@ -27,11 +29,11 @@ type Props = {
 };
 
 const HUE_BY_FIRMNESS: Record<FirmnessValue, number> = {
-  "very-soft": 118,
-  soft: 118,
-  hard: 28,
-  "very-hard": 6,
-  "super-hard": 355,
+  "very-soft": greenHue,
+  soft: greenHue,
+  hard: yellowHue,
+  "very-hard": redHue,
+  "super-hard": darkRedHue,
 };
 
 export default function FirmnessSlider({
