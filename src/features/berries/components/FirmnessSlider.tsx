@@ -2,11 +2,14 @@ import React, { useEffect, useMemo, useRef, useState } from "react";
 import type { Berry } from "../types/berry";
 import styles from "./FirmnessSlider.module.css";
 import {
+  clamp,
   indexToGlowCenter,
   indexToThumbTranslate,
+  lerpHueDeg,
   pickIndexFromPointer,
-} from "../../../utils/math";
-import { darkRedHue, greenHue, redHue, ROW_GAP, ROW_H, yellowHue} from "../../../utils/constants";
+  pointerYOnTrack,
+} from "../../../utils/sliderGeometry";
+import { darkRedHue, greenHue, redHue, ROW_GAP, ROW_H, THUMB, yellowHue} from "../../../utils/constants";
 
 
 type SliderVars = React.CSSProperties & {
@@ -43,24 +46,58 @@ export default function FirmnessSlider({
   title = "Pok`e Berries",
   subtitle = "How tough are you?",
 }: Props) {
-  const trackWrapRef = useRef<HTMLDivElement | null>(null);
-  const [isDragging, setIsDragging] = useState(false);
+  const trackWrapRef = useRef<HTMLDivElement | null>(null); // the whole track area - through that we can get the bounding rect
+  const [isDragging, setIsDragging] = useState(false); 
+  const [dragY, setDragY] = useState<number | null>(null); // countinuous Y position of the drag on the track, or null if not dragging
 
-  const activeIndex = Math.max(0, options.findIndex((o) => o.value === selected));
+  const activeIndex = Math.max(0, options.findIndex((o) => o.value === selected)); // index of the selected row
 
-  const translateY = useMemo(() => indexToThumbTranslate(activeIndex), [activeIndex]);
+  // where to put the thumb and what hue to use
+  const lockedThumbY = useMemo(() => indexToThumbTranslate(activeIndex), [activeIndex]);
   const glowCenterY = useMemo(() => indexToGlowCenter(activeIndex), [activeIndex]);
+  const lockedHue = HUE_BY_FIRMNESS[options[activeIndex]?.value ?? "soft"] ?? 118;
 
-  const hue = HUE_BY_FIRMNESS[options[activeIndex]?.value ?? "soft"] ?? 118;
+  // track geometry
+  const step = ROW_H + ROW_GAP; // distance between row tops
+  const full = options.length * ROW_H + (options.length - 1) * ROW_GAP; // full height of the track
+
+  const knobTranslate = isDragging && dragY != null ? clamp(dragY - THUMB / 2, 0, full - THUMB) : lockedThumbY; // where to put the knob, using clamp to keep it on track
+  const glowY = isDragging && dragY != null ? clamp(dragY, 0, full) : glowCenterY; // where to put the glow center
+
+
+  // Here i calculate continuous hue when dragging, or discrete hue when not dragging
+  const hue = useMemo(() => {
+    if (!isDragging && dragY == null) return lockedHue;
+    const idxFloat = clamp(glowY / step, 0, options.length - 1);
+    const i0 = Math.floor(idxFloat);
+    const i1 = Math.min(options.length - 1, i0 + 1);
+    const t = idxFloat - i0;
+
+    // interpolate hue between the two nearest rows
+    const h0 = HUE_BY_FIRMNESS[options[i0]?.value ?? "soft"] ?? 118;
+    const h1 = HUE_BY_FIRMNESS[options[i1]?.value ?? "soft"] ?? 118;
+    return lerpHueDeg(h0, h1, t);
+  },[isDragging, dragY, glowY, step, options, lockedHue]);
 
   useEffect(() => {
     if (!isDragging) return;
 
     const onMove = (e: PointerEvent) => {
-      const idx = pickIndexFromPointer(e, trackWrapRef.current, options.length);
-      if (idx != null && idx !== activeIndex) onChange(options[idx].value);
+      const rawY = pointerYOnTrack(e, trackWrapRef.current); // the y on the track
+      if( rawY == null ) return;
+
+      const y = clamp(rawY, 0, full); // keep it on track
+      setDragY(y); // updating the continuous drag Y location
+
+      // when crossing the threshold for a new row, call onChange
+      const idx = Math.round(y / step);
+      const clampedIdx = clamp(idx, 0, options.length - 1);
+      if (clampedIdx !== activeIndex) onChange(options[clampedIdx].value);
     };
-    const stop = () => setIsDragging(false);
+    const stop = () => {
+      setIsDragging(false);
+      setDragY(null);
+    }
 
     window.addEventListener("pointermove", onMove);
     window.addEventListener("pointerup", stop, { once: true });
@@ -71,16 +108,25 @@ export default function FirmnessSlider({
       window.removeEventListener("pointerup", stop);
       window.removeEventListener("pointercancel", stop);
     };
-  }, [isDragging, options, activeIndex, onChange]);
+  }, [isDragging, options, activeIndex, onChange, step, full]);
 
   const handlePointerDown = (e: React.PointerEvent) => {
     (e.target as HTMLElement).setPointerCapture?.(e.pointerId);
     setIsDragging(true);
 
+    const rawY = pointerYOnTrack(e.nativeEvent, trackWrapRef.current);
+    if( rawY == null ) return;
+    const y = clamp(rawY, 0, full);
+    setDragY(y);
+
     const idx = pickIndexFromPointer(e.nativeEvent, trackWrapRef.current, options.length);
-    if (idx != null && idx !== activeIndex) onChange(options[idx].value);
+    if( idx == null ) return;
+    const clampedIdx = clamp(idx, 0, options.length - 1);
+
+    if (clampedIdx != null && clampedIdx !== activeIndex) onChange(options[clampedIdx].value);
   };
 
+  // when clicking a row, if not active, call onChange
   const handleRowClick = (idx: number) => {
     if (idx !== activeIndex) onChange(options[idx].value);
   };
@@ -105,8 +151,8 @@ const cssVars: SliderVars = {
         <div className={styles.track}>
           <div className={styles.glow} aria-hidden />
           <div
-            className={styles.thumb}
-            style={{ ["--thumb-translate" as string ]: `${translateY}px` }}
+            className={`${styles.thumb} ${isDragging ? styles.thumbDragging : ""}`}
+            style={{ ["--thumb-translate" as string ]: `${knobTranslate}px` }}
             aria-hidden
           />
         </div>
