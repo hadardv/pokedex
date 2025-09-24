@@ -78,8 +78,12 @@ A tiny `useDebouncedValue` hook delays filtering (e.g. 300ms) for smoother typin
 
 ---
 
-## ScreenShot
+## Screenshots
 <img width="1252" height="679" alt="Screenshot 2025-09-24 at 10 04 46" src="https://github.com/user-attachments/assets/401763b2-3130-4a3b-abd4-668fd43417c8" />
+<img width="1215" height="636" alt="image" src="https://github.com/user-attachments/assets/4c3cca87-2384-470e-bdd9-15741be2a430" />
+<img width="1220" height="623" alt="image" src="https://github.com/user-attachments/assets/2abc5c3a-17ba-42a5-8ad7-3a9bdd181ee6" />
+
+
 
 
 ## Install & Run
