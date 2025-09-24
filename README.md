@@ -1,4 +1,4 @@
-# Poké Berries — React + TypeScript + TanStack Query
+# Pok`e Berries — React + TypeScript + TanStack Query
 
 React project that lists and filters **PokéAPI berries** with a custom **vertical Firmness Slider** (drag with live motion + snap) and **debounced search**. Built to demonstrate solid frontend practices: typed API boundaries (DTO → domain mapping), TanStack Query for fetching, and modular CSS.
 
