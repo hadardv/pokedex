@@ -65,10 +65,11 @@ Only flavors with `potency > 0` are kept.
 
 ## Firmness Slider (how it works)
 
+### live drag + snap using **@use-gesture/react** (smooth pointer handling, minimal code).
 - **Live drag**: while dragging, the knob & glow follow the pointer continuously.
 - **Snap**: selection updates only when the pointer crosses the midpoint of the nearest row.
 - **Color**: hue (HSL) changes by firmness (`118°` green → `28°` orange → `6°/355°` red).
-
+  
 ---
 
 ## Search (Debounce)
