@@ -43,7 +43,7 @@ src/
 
 ---
 
-## 🔌 API & Types
+## API & Types
 
 - `GET /berry?limit=...` → **BerryListDTO** (list of links)
 - `GET /berry/:id|:name` → **BerryDetailDTO** (firmness, flavors, ...)
@@ -76,6 +76,10 @@ Only flavors with `potency > 0` are kept.
 A tiny `useDebouncedValue` hook delays filtering (e.g. 300ms) for smoother typing and fewer renders.
 
 ---
+
+## ScreenShot
+<img width="1252" height="679" alt="Screenshot 2025-09-24 at 10 04 46" src="https://github.com/user-attachments/assets/401763b2-3130-4a3b-abd4-668fd43417c8" />
+
 
 ## Install & Run
 
