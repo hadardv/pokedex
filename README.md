@@ -18,10 +18,10 @@ React project that lists and filters **PokéAPI berries** with a custom **vertic
 
 ## Stack
 
-- Vite + React + TypeScript  
-- @tanstack/react-query (+ Devtools)  
-- CSS Modules  
-- @use-gesture/react for drag handling  
+- Vite + React + TypeScript
+- @tanstack/react-query (+ Devtools)
+- CSS Modules
+- @use-gesture/react for drag handling
 
 ---
 
@@ -29,7 +29,7 @@ React project that lists and filters **PokéAPI berries** with a custom **vertic
 
 ```
 src/
-  app/                 
+  app/
   lib/                 # http, hooks, helpers
   utils/               # slider geometry
   features/
@@ -49,6 +49,7 @@ src/
 - `GET /berry/:id|:name` → **BerryDetailDTO** (firmness, flavors, ...)
 
 **Berry** domain type:
+
 ```ts
 type Berry = {
   id: number;
@@ -57,6 +58,7 @@ type Berry = {
   flavors: { name: string; potency: number }[];
 };
 ```
+
 Only flavors with `potency > 0` are kept.
 
 ---
@@ -82,4 +84,3 @@ npm i
 npm run dev
 # open http://localhost:5173
 ```
-

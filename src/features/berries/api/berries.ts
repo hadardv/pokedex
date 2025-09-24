@@ -19,8 +19,10 @@ function toDomain(dto: BerryDetailDTO): Berry {
 }
 
 export async function fetchAllBerries(): Promise<Berry[]> {
-    const list = await get<BerryListDTO>(`/berry?limit=${PAGE_LIMIT}`);
-    const urls = list.results.map((r) => r.url.replace("https://pokeapi.co/api/v2", ""));
-    const details = await concurrentMap(urls, DETAIL_CONCURRENCY, async (path) => get<BerryDetailDTO>(path));
-    return details.map(toDomain);
+  const list = await get<BerryListDTO>(`/berry?limit=${PAGE_LIMIT}`);
+  const urls = list.results.map((r) => r.url.replace("https://pokeapi.co/api/v2", ""));
+  const details = await concurrentMap(urls, DETAIL_CONCURRENCY, async (path) =>
+    get<BerryDetailDTO>(path),
+  );
+  return details.map(toDomain);
 }

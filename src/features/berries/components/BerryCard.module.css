@@ -1,42 +1,42 @@
 .card {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    border: 1px solid #e2e8f0;
-    border-radius: 12px;
-    padding: 10px 14px;
-    background: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  padding: 10px 14px;
+  background: #ffffff;
 }
 
-.left{
-    display: flex;
-    align-items: center;
-    gap: 10px;
+.left {
+  display: flex;
+  align-items: center;
+  gap: 10px;
 }
 
 .icon {
-    width: 36px;
-    height: 36px;
-    border-radius: 999px;
-    object-fit: cover;
+  width: 36px;
+  height: 36px;
+  border-radius: 999px;
+  object-fit: cover;
 }
 
 .name {
-    text-transform: lowercase;
-    font-weight: 600;
-    letter-spacing: 0.2px;
+  text-transform: lowercase;
+  font-weight: 600;
+  letter-spacing: 0.2px;
 }
 
 .right {
-    display: flex;
-    gap: 8px;
-    flex-wrap: wrap;
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
 }
 
 .chip {
-    background: #f1f5f9 ;
-    color: #475569;
-    padding: 6px 10px;
-    border-radius: 999px;
-    font-size: 14px;
+  background: #f1f5f9;
+  color: #475569;
+  padding: 6px 10px;
+  border-radius: 999px;
+  font-size: 14px;
 }

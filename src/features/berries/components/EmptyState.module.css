@@ -1,18 +1,18 @@
 .wrapper {
-    display: grid;
-    place-items: center;
-    padding: 48px 12px;
-    color: #738294;
-    border: 1px dashed #e6edf4;
-    border-radius: 12px;
-    background: #fafcff;
+  display: grid;
+  place-items: center;
+  padding: 48px 12px;
+  color: #738294;
+  border: 1px dashed #e6edf4;
+  border-radius: 12px;
+  background: #fafcff;
 }
 
 .title {
-    font-weight: 700;
-    margin-bottom: 6px;
+  font-weight: 700;
+  margin-bottom: 6px;
 }
 
 .note {
-    font-size: 14px;
+  font-size: 14px;
 }

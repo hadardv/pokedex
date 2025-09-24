@@ -1,111 +1,107 @@
 .container {
-    position: relative;
-    display: grid;
-    grid-template-columns: 64px minmax(220px, 1fr);
-    gap: 18px;
-    align-items: start;
+  position: relative;
+  display: grid;
+  grid-template-columns: 64px minmax(220px, 1fr);
+  gap: 18px;
+  align-items: start;
 }
 
-
-
 .header {
-    display: grid;
-    grid-column: 1 / -1;
-    gap: 6px;
-    margin-bottom: 8px;
+  display: grid;
+  grid-column: 1 / -1;
+  gap: 6px;
+  margin-bottom: 8px;
 }
 
 .title {
-    font-size: 18px;
-    font-weight: 700;
-    letter-spacing: 0.2px;
+  font-size: 18px;
+  font-weight: 700;
+  letter-spacing: 0.2px;
 }
 
 .sub {
-    color: #64748b;
-    font-weight: 600;
+  color: #64748b;
+  font-weight: 600;
 }
 
 .trackWrap {
-    position: relative;
-    height: calc(var(--rows) * var(--row-h) + (var(--rows) - 1) * var(--row-gap));
-    display: grid;
-    justify-items: center;
+  position: relative;
+  height: calc(var(--rows) * var(--row-h) + (var(--rows) - 1) * var(--row-gap));
+  display: grid;
+  justify-items: center;
 }
 
 .track {
-    position: relative;
-    width: 44px;
-    height: 100%;
-    border-radius: 999px;
-    background: linear-gradient(#fbfdff, #eef3f8);
-    border: 1px solid #e6edf4;
-    box-shadow: 
-    inset 0 2px 8px rgba(0,0,0,0.12),
-    inset 0 -2px 10px rgba(0,0,0,0.06),
-    0 1px 0 rgba(255,255,255,0.85);
-    overflow: hidden;
+  position: relative;
+  width: 44px;
+  height: 100%;
+  border-radius: 999px;
+  background: linear-gradient(#fbfdff, #eef3f8);
+  border: 1px solid #e6edf4;
+  box-shadow:
+    inset 0 2px 8px rgba(0, 0, 0, 0.12),
+    inset 0 -2px 10px rgba(0, 0, 0, 0.06),
+    0 1px 0 rgba(255, 255, 255, 0.85);
+  overflow: hidden;
 }
 
 .glow {
-    position: absolute;
-    inset: 0;
-    pointer-events: none;
-    background:
-    radial-gradient(
-      180px 160px at 50% var(--y-px),
-      hsl(var(--hue) 90% 56% / 0.28),
-      hsl(var(--hue) 85% 50% / 0.18) 38%,
-      transparent 60%
-    );
-    transition: background 200ms linear; 
-    
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: radial-gradient(
+    180px 160px at 50% var(--y-px),
+    hsl(var(--hue) 90% 56% / 0.28),
+    hsl(var(--hue) 85% 50% / 0.18) 38%,
+    transparent 60%
+  );
+  transition: background 200ms linear;
 }
 
 .thumb {
-    position: absolute;
-    left: 50%;
-    transform: translate(-50%, var(--thumb-translate));
-    width: 40px;
-    height: 40px;
-    border-radius: 999px;
-    background: #fff;
-    border: 1px solid #e2e8f0;
-    box-shadow:
-    0 10px 14px rgba(0,0,0,0.08),
-    inset 0 -3px rgba(0,0,0,0.05);
-    touch-action: none;
-    cursor: grab;
-    transition: transform 180ms ease;
+  position: absolute;
+  left: 50%;
+  transform: translate(-50%, var(--thumb-translate));
+  width: 40px;
+  height: 40px;
+  border-radius: 999px;
+  background: #fff;
+  border: 1px solid #e2e8f0;
+  box-shadow:
+    0 10px 14px rgba(0, 0, 0, 0.08),
+    inset 0 -3px rgba(0, 0, 0, 0.05);
+  touch-action: none;
+  cursor: grab;
+  transition: transform 180ms ease;
 }
 
-.thumb:active { 
-    cursor: grabbing; 
+.thumb:active {
+  cursor: grabbing;
 }
 
 .list {
-    display: grid;
-    gap: var(--row-gap);
-    border-right: 2px dashed #e7edf4;
-    padding-right: 12px;
+  display: grid;
+  gap: var(--row-gap);
+  border-right: 2px dashed #e7edf4;
+  padding-right: 12px;
 }
 
 .row {
-    height: var(--row-h);
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    gap: 8px;
-    padding: 2px 0 14px 0;
-    background: transparent;
-    border: 0;
-    outline: none;
-    border-bottom: 2px dashed #e7edf4;
-    text-align: left;
+  height: var(--row-h);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 8px;
+  padding: 2px 0 14px 0;
+  background: transparent;
+  border: 0;
+  outline: none;
+  border-bottom: 2px dashed #e7edf4;
+  text-align: left;
 }
 
-.row:last-child { 
-    border-bottom: none; 
+.row:last-child {
+  border-bottom: none;
 }
 
 .label {
@@ -113,12 +109,12 @@
   font-weight: 400;
   color: #1f2937;
   letter-spacing: 0.2px;
-  white-space: nowrap;               
+  white-space: nowrap;
   line-height: 1.1;
 }
 
 .labelActive {
-    color: hsl(var(--hue) 85% 46%);
+  color: hsl(var(--hue) 85% 46%);
 }
 .count {
   font-size: 20px;
@@ -129,6 +125,5 @@
 }
 
 .thumb.dragging {
-    transition: none;
+  transition: none;
 }
-

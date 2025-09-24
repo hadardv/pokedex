@@ -1,6 +1,5 @@
-
-export const ROW_H = 70;      
-export const ROW_GAP = 16;    
+export const ROW_H = 70;
+export const ROW_GAP = 16;
 export const THUMB = 40;
 
 export const greenHue = 118;
